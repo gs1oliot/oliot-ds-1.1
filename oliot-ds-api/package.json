@@ -1,0 +1,27 @@
+{
+  "name": "DiscoveryServiceAPI",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.6",
+    "jade": "1.11.0",
+    "body-parser":"1.13.3",
+    "md5":"2.0.0",
+    "neo4j":"2.0.0-RC2",
+    "oauth2-server":"2.4.1",
+    "ioredis": "1.9.0",
+    "mongodb": "~2.0",
+    "native-dns": "0.7.0",
+    "java": "0.6.0",
+    "socket.io": "1.4.4",
+    "coap": "0.12.1",
+    "kalmanjs": "1.0.0-beta",
+    "request": "2.75.0",
+    "bluebird": "3.4.6",
+    "pg-promise": "3.2.6" 
+    
+  }
+}
