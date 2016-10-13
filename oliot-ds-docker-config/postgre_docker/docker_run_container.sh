@@ -1,0 +1,1 @@
+docker run -d --name ds_auth_postgre -e POSTGRES_PASSWORD=password -e POSTGRES_DB=discovery_service -v $HOME/oliot-ds-1.1/oliot-ds-docker-config/postgre_docker/data:/var/lib/postgresql/data  -p 5432:5432 auth_ds
