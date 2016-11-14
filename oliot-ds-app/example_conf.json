@@ -1,5 +1,5 @@
 {
 	"PORT": 3000,
 	"DS_API_ADDRESS": "http://(DS_api_address):3001",
-    "DNS_ADDRESS": "(dns_server_address)"
+	"DNS_ADDRESS": "(dns_server_address)"
 }
