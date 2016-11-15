@@ -1,6 +1,6 @@
 {
     "PORT": 3000,
-    "PG_ID": "postgre",
+    "PG_ID": "postgres",
     "PG_PW": "password",
     "PG_ADDRESS": "auth_server_address",
     "PG_DB": "auth_server_db_name",

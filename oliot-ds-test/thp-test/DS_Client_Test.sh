@@ -8,7 +8,7 @@ if [ $# -ne 4 ]; then
 
 	echo "Usage: bash ./DS_Client_Test.sh [initial num] [iteration num] [increase amount] [target address]"
 
-	echo "Example :  bash ./DS_Client_Test.sh 1000 5 1000 143.248.56.222" 
+	echo "Example :  bash ./DS_Client_Test.sh 100 6 200 143.248.56.222" 
 
 	exit 1
 
