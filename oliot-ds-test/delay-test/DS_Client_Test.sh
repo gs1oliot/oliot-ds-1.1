@@ -32,7 +32,7 @@ for (( j=1; j<=num; j++ ))
 
 do
 
-	node DS_Client.js | awk -f parsing.awk >> result
+	node DS_Client.js -n $j | awk -f parsing.awk >> result
 
 done
 
