@@ -32,6 +32,6 @@ do
 
 	node DS_Client.js -n $(($1+$3*$c)) -a $4
 
-		
+	echo ""		
 
 done
