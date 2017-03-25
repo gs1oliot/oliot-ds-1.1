@@ -1,0 +1,24 @@
+extends layout
+
+block mainContent
+	p
+		if(encodeServicename)
+			a(href='/service/#{encodeServicename}', class="button small pink") &laquo;  Back to service
+		else
+			a(href='/index', class="button small pink") &laquo;  Back to index
+
+	if error
+		p.error Something went terribly bad: #{error}
+		
+	h2 Showing #{grantname}'s capability for the service: #{servicename}
+		
+	p
+		li.listRow= grantname + ' '
+			if(read)
+				a(href='/service/#{encodeServicename}/unread/#{encodeGrantname}', class='button small  edit') read
+			else
+				a(href='/service/#{encodeServicename}/read/#{encodeGrantname}', class='button small  edit') unread
+			if(write)	
+				a(href='/service/#{encodeServicename}/unwrite/#{encodeGrantname}', class='button small  edit') write
+			else
+				a(href='/service/#{encodeServicename}/write/#{encodeGrantname}', class='button small  edit') unwrite	

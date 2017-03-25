@@ -1,0 +1,6 @@
+version: '2'
+services:
+  node_java:
+    build:
+      context: ./node-java
+      dockerfile: Dockerfile

@@ -1,0 +1,21 @@
+extends layout
+
+block mainContent
+	h2 Adding group
+	
+	p
+		if(servicename)
+			a(href='/', class="button small pink") &laquo;  Back to index
+		else
+			a(href='/', class="button small pink") &laquo;  Back to index
+	
+	if error
+		p.error Something went terribly bad: #{error}
+	
+	form(method='post')
+		div(class='listRow')
+			label group to add:
+				input(name='groupname', value='#{groupname}')
+	
+		div.formFooter
+			input(type='submit', value='Add')

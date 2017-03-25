@@ -1,0 +1,61 @@
+version: '2'
+services:
+  neo4j:
+    container_name: acl_neo4j_ds
+    image: neo4j:3.0
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASSWORD}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+      - "7473:7473"
+    volumes:
+      - ${PWD}/ds-data/neo4j/data:/data
+      - ${PWD}/ds-data/neo4j/logs:/logs
+      - ${PWD}/ds-data/neo4j/constraints.cql:/var/lib/neo4j/import/constraints.cql
+  auth_ds:
+    container_name: auth_postgre_ds
+    image: postgres:9.4
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${PWD}/ds-data/postgre/data:/var/lib/postgresql/data
+      - ${PWD}/ds-data/postgre/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+  cache:
+    container_name: cache_redis_ds
+    image: redis:3.2
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${PWD}/ds-data/redis/data:/data
+  mongo:
+    container_name: backend_mongo
+    image: mongo:3.3
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${PWD}/ds-data/mongo/db:/data/db
+  web_api:
+    container_name: web_api_ds
+    build:
+      context: ./web-api
+      dockerfile: Dockerfile
+    links:
+      - neo4j:acl_neo4j_ds
+    depends_on:
+      - neo4j
+    volumes:
+      - ${PWD}/ds-data/wait-for-it.sh:/bin/wait-for-it.sh
+    ports:
+      - "3001:3001"
+    command: ["/bin/wait-for-it.sh", "acl_neo4j_ds:7474", "--timeout=30", "--", "node", "ds_api_app.js"]
+  web_app:
+    container_name: web_app_ds
+    build:
+      context: ./web-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"

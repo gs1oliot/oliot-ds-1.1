@@ -1,0 +1,18 @@
+extends layout
+
+block mainContent
+	h2 Adding thing
+	
+	p
+		a(href='/index', class="button small pink") &laquo;  Back to index
+	
+	if error
+		p.error Something went terribly bad: #{error}
+	
+	form(method='post')
+		div(class='listRow')
+			label Thing to add:
+				input(name='thingname', value='#{thingname}')
+	
+		div.formFooter
+			input(type='submit', value='Add')

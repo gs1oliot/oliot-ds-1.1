@@ -1,0 +1,17 @@
+{
+    "PORT": 3000,
+    "PG_ID": "${POSTGRES_USER}",
+    "PG_PW": "${POSTGRES_PASSWORD}",
+    "PG_ADDRESS": "auth_postgre_ds",
+    "PG_PORT": 5432,
+    "PG_DB": "${POSTGRES_DATABASE}",
+    "NEO_ID": "${NEO4J_USER}",
+    "NEO_PW": "${NEO4J_PASSWORD}",
+    "NEO_ADDRESS": "acl_neo4j_ds:7474",
+    "MONGO_ADDRESS": "backend_mongo:27017",
+    "MONGO_DBNAME": "ds_db_name",
+    "MONGO_COLLECTION": "ds_collection_name",
+    "DNS_ADDRESS": "${DNS_ADDRESS}",
+    "REDIS_HOST" : "cache_redis_ds",
+    "REDIS_DEFAULT_EXPIRE" : ${REDIS_DEFAULT_EXPIRE}
+}
