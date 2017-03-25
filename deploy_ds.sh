@@ -7,10 +7,11 @@ source .env
 # replace variables in conf file
 envsubst < ./web-api/conf.template > ./web-api/conf.json
 envsubst < ./web-app/conf.template > ./web-app/conf.json
+envsubst < ./web-tdt/conf.template > ./web-tdt/conf.json
 envsubst < ./ds-test/conf.template > ./ds-test/conf.json
 
 # run
-docker-compose -f compose_node_java.yml build
+#docker-compose -f compose_node_java.yml build
 docker-compose -f compose_ds.yml up
 #sleep 20
 

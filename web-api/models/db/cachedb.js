@@ -3,6 +3,7 @@
  */
 var	Redis = require('ioredis');
 
+
 var config = require('../../config/conf.json');
 
 var redis = new Redis(6379, config.REDIS_HOST);

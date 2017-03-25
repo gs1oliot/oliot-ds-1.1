@@ -547,7 +547,6 @@ exports.configure = function (app) {
 				console.log(err);
 				return res.status(500).send({error: err});
 			}
-			//console.log(results);
 			Thing.isAuthority(results.username, req.body.thingname, function(err, results){
 				if (err){
 					console.log(err);
@@ -577,6 +576,7 @@ exports.configure = function (app) {
 						console.log("insert:"+err);
 						return res.status(500).send({error: err});
 					}
+					console.log(result);
 					//storedData["thingname"] = req.body.thingname;
 				});
 				maindb.updateLatestData(maindb.getCollection(config.MONGO_COLLECTION+"_latest"), storedData, function(err, result){
@@ -584,6 +584,7 @@ exports.configure = function (app) {
 						console.log("update:"+err);
 						return res.status(500).send({error: err});
 					}
+					console.log(result);
 				});
 				return res.send({result:"success"});
 			//});
@@ -592,6 +593,7 @@ exports.configure = function (app) {
 		});
 	});
 	app.get('/thing/:thingname/latest', app.oauth.authorise(), function(req, res){
+		console.log("latest");
 		auth.getUserbyToken(req.oauth.bearerToken.accessToken, function(err, results){
 			if(err){
 				console.log(err);

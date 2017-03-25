@@ -51,7 +51,7 @@ services:
       - ${PWD}/ds-data/wait-for-it.sh:/bin/wait-for-it.sh
     ports:
       - "3001:3001"
-    command: ["/bin/wait-for-it.sh", "acl_neo4j_ds:7474", "--timeout=30", "--", "node", "ds_api_app.js"]
+    command: ["/bin/wait-for-it.sh", "acl_neo4j_ds:7474", "--timeout=30", "--", "node", "app.js"]
   web_app:
     container_name: web_app_ds
     build:
@@ -59,3 +59,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+  web_tdt:
+    container_name: web_tdt_ds
+    build:
+      context: ./web-tdt
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"

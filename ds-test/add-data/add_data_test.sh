@@ -12,6 +12,7 @@ if [ $# -ne 2 ]; then
 
 fi
 
-node ../test_data.js
-
+cd ..
+node test_data.js -a $2
+cd ./add-data
 node add_data.js -n $1 -a $2 

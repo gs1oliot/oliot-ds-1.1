@@ -2,7 +2,13 @@ var rest = require('./rest.js');
 var config = require('./conf.json');
 var fs = require('fs');
 
-var ds_api_address = config.DS_API_ADDRESS;
+var argv =  require('optimist')
+		.usage('Usage: $0 -a [string]')
+		.default({a:'127.0.0.1'})
+		.argv;
+
+var address = argv.a;
+var ds_api_address = 'http://'+address+':3001';
 var username = config.DS_ID;
 var password = config.DS_PW;
 

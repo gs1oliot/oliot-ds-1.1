@@ -2,7 +2,8 @@ var 	auth = require('./auth');
 var		rest = require('./rest');
 var		config = require('./config/conf.json');
 var		ds_api_address = config.DS_API_ADDRESS;
-var		tdt =  require('./tdt/tdt');
+//var		tdt =  require('./tdt/tdt');
+var     tdt_address = config.TDT_ADDRESS;
 
 exports.configure = function (app) {	
 	app.get('/css/', function (req, res) {
@@ -13,10 +14,6 @@ exports.configure = function (app) {
 	app.get('/chart/', function (req, res) {
 		res.contentType('text/javascript');
 		res.sendfile(__dirname + '/public/live_chart.js');
-	});
-	
-	app.get('/tdt/thingname/:thingname/type/:type', function(req, res){
-		res.send({result:tdt.convertString(req.params.thingname, req.params.type)});
 	});
 	
 	app.get('/addthing', auth.ensureAuthenticated, function(req, res){
@@ -50,23 +47,30 @@ exports.configure = function (app) {
 	
 
 	app.get('/thing/:thingname', auth.ensureAuthenticated, function(req, res){
-		var thingname = tdt.convertString(req.params.thingname, 'PURE_IDENTITY');
-		rest.getOperation (ds_api_address, "user/"+req.user.email+"/thing/"+thingname+"/have", null, req.user.token, null, null, function (error, response) {
-			if (error) {
-				res.render('error.jade', { user: req.user, thingname: thingname, error: error });
+		rest.getOperation(tdt_address,"thingname/"+req.params.thingname+"/type/PURE_IDENTITY", null, null, null ,null, function (error, response) {
+			if(error){
+				res.render('error.jade', { user: req.user, thingname: req.params.thingname, error: error });
 			} else {
-				var encodeServices = [];
-				if(response.services){
-					for(var i=0; i < response.services.length; i++){
-						encodeServices.push(encodeURIComponent(response.services[i]));
+				var thingname = response.result;
+				//var thingname = tdt.convertString(req.params.thingname, 'PURE_IDENTITY');
+				rest.getOperation (ds_api_address, "user/"+req.user.email+"/thing/"+thingname+"/have", null, req.user.token, null, null, function (error, response) {
+					if (error) {
+						res.render('error.jade', { user: req.user, thingname: thingname, error: error });
+					} else {
+						var encodeServices = [];
+						if(response.services){
+							for(var i=0; i < response.services.length; i++){
+								encodeServices.push(encodeURIComponent(response.services[i]));
+							}
+						}
+						if(response.owner === 'yes'){
+							res.render('editthing.jade', { user: req.user, thingname: thingname, services: response.services, encodeservices: encodeServices, owner: response.owner, error: error });
+						} else {
+							res.render('editthing.jade', { user: req.user, thingname: thingname, services: response.services, encodeservices: encodeServices, error: error });
+							
+						}
 					}
-				}
-				if(response.owner === 'yes'){
-					res.render('editthing.jade', { user: req.user, thingname: thingname, services: response.services, encodeservices: encodeServices, owner: response.owner, error: error });
-				} else {
-					res.render('editthing.jade', { user: req.user, thingname: thingname, services: response.services, encodeservices: encodeServices, error: error });
-					
-				}
+				});
 			}
 		});
 	});
@@ -74,12 +78,19 @@ exports.configure = function (app) {
 	app.get('/thing/:thingname/servicetype/:servicetype', auth.ensureAuthenticated, function(req, res){
 		var thingname = req.params.thingname;
 		var servicetype = req.params.servicetype;
-		tdt.getServices(thingname, servicetype, function(err, services){
+		rest.getOperation (tdt_address, "thingname/"+thingname+"/servicetype/"+servicetype, null, null, null, null, function (error, services) {
+			if (error) {
+				return res.send(error)
+			} else {
+				res.send(services);
+			}
+		});
+		/*tdt.getServices(thingname, servicetype, function(err, services){
 			if(err){
 				return res.send(err)
 			}
 			res.send(services);
-		});
+		});*/
 	});
 	
 	app.get('/addgroup', auth.ensureAuthenticated, function(req, res){
@@ -159,8 +170,15 @@ exports.configure = function (app) {
 		var servicename = req.params.servicename;
 		rest.getOperation(ds_api_address, "service/"+encodeURIComponent(req.params.servicename)+"/grant", null, req.user.token, null, null, function (error, response) {
 			var strArray = servicename.split(':');
-			var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
-			res.render('editservice.jade', { user: req.user,  thingname: pi, servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: response.groups, users: response.users, error: error });
+			rest.getOperation(tdt_address,"thingname/"+strArray[0]+"/type/PURE_IDENTITY", null, null, null ,null, function (error, response) {
+				if(error){
+					res.render('error.jade', { user: req.user, thingname: strArray[0], servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: response.groups, users: response.users, error: error });
+				} else {
+					var pi = response.result;
+					//var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
+					res.render('editservice.jade', { user: req.user,  thingname: pi, servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: response.groups, users: response.users, error: error });
+				}
+			});
 		});
 	});
 
@@ -172,8 +190,15 @@ exports.configure = function (app) {
 				res.render('error.jade', { user: req.user, servicename: servicename, error: error });
 			} else {
 				var strArray = servicename.split(':');
-				var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
-				res.render('chart.jade', { user: req.user, thingname: pi,  servicename: servicename, encodeServicename: encodeURIComponent(servicename), observe_on: 'false' });
+				rest.getOperation(tdt_address,"thingname/"+strArray[0]+"/type/PURE_IDENTITY", null, null, null ,null, function (error, response) {
+					if(error){
+						res.render('error.jade', { user: req.user, servicename: servicename, error: error });
+					} else {
+						var pi = response.result;
+						//var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
+						res.render('chart.jade', { user: req.user, thingname: pi,  servicename: servicename, encodeServicename: encodeURIComponent(servicename), observe_on: 'false' });
+					}
+				});
 			} 
 		});
 	});

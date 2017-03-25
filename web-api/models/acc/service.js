@@ -9,8 +9,10 @@ var Group = require('./group');
 var config = require('../../config/conf.json');
 var neo4j_url = "http://"+config.NEO_ID+":"+config.NEO_PW+"@"+config.NEO_ADDRESS;
 var dns = require('native-dns');
-var tdt = require('../../tdt/tdt');
+//var tdt = require('../../tdt/tdt');
 var cachedb = require('../db/cachedb.js');
+var rest = require('../../rest.js');
+var tdt_address = config.TDT_ADDRESS;
 
 var db = new neo4j.GraphDatabase({
     // Support specifying database info via environment variables,
@@ -623,83 +625,49 @@ Service.getNAPTR = function (FQDN, callback){
 
 Service.setServices = function (thingname, callback) {
 
-	var FQDN = tdt.convertString(thingname, 'ONS_HOSTNAME');
-	var es =  tdt.convertString(thingname, 'ELEMENT_STRING');
-	
-	/*var question = dns.Question({
-	  name: FQDN,
-	  type: 'NAPTR',
-	});
-	var req = dns.Request({
-	  question: question,
-	  server: { address: config.DNS_ADDRESS, port: 53, type: 'udp' },
-	  timeout: 1000,
-	  cache: false,
-	});
-
-	req.on('timeout', function () {
-		return callback('Timeout in making request');
-	});
-
-	req.on('message', function (err, answer) {
-		if(err) {
-			return callback(err);
+	rest.getSimpleOperation(tdt_address,"thingname/"+thingname+"/type/ONS_HOSTNAME", function (error, response) {
+		if(error){
+			console.log(error);
+			return callback(error);
 		}
-		var es =  tdt.convertString(thingname, 'ELEMENT_STRING');
-		cachedb.cacheDataWithExpire(FQDN, JSON.stringify(answer.answer), config.REDIS_DEFAULT_EXPIRE);
-		answer.answer.forEach(function (a, idx, array) {
-			//console.log(a.service);
-			if(a.service === 'rest.api'){
-				var strArray = a.regexp.split('!');
-				
-				Service.create({servicename:es+':'+strArray[2]}, function (err, service){
-					if(err) {
-						return callback(err);
-					}
-					Thing.get(thingname, function(err, thing){
-						thing.have(service, function(err){
+		var FQDN = response.result;
+		//var FQDN = tdt.convertString(thingname, 'ONS_HOSTNAME');
+		rest.getSimpleOperation(tdt_address,"thingname/"+thingname+"/type/ELEMENT_STRING",  function (error, response) {
+			if(error){
+				console.log(error);
+				return callback(error);
+			}
+			var es = response.result;
+			//var es =  tdt.convertString(thingname, 'ELEMENT_STRING');
+			
+			Service.getNAPTR(FQDN, function(err, results){
+				if(err) {
+					return callback(err);
+				}
+				results.forEach(function (a, idx, array) {
+					//console.log(a.service);
+					if(a.service === 'rest.api'){
+						var strArray = a.regexp.split('!');
+						
+						Service.create({servicename:es+':'+strArray[2]}, function (err, service){
 							if(err) {
 								return callback(err);
 							}
-							if(idx === array.length -1) {
-								return callback(null);
-							}
+							Thing.get(thingname, function(err, thing){
+								thing.have(service, function(err){
+									if(err) {
+										return callback(err);
+									}
+									if(idx === array.length -1) {
+										return callback(null);
+									}
+								});
+							});
 						});
-					});
-				});
-			}
-			return callback(null);
-		});
-		
-	});
-	req.send();*/
-	
-	Service.getNAPTR(FQDN, function(err, results){
-		if(err) {
-			return callback(err);
-		}
-		results.forEach(function (a, idx, array) {
-			//console.log(a.service);
-			if(a.service === 'rest.api'){
-				var strArray = a.regexp.split('!');
-				
-				Service.create({servicename:es+':'+strArray[2]}, function (err, service){
-					if(err) {
-						return callback(err);
 					}
-					Thing.get(thingname, function(err, thing){
-						thing.have(service, function(err){
-							if(err) {
-								return callback(err);
-							}
-							if(idx === array.length -1) {
-								return callback(null);
-							}
-						});
-					});
+					return callback(null);
 				});
-			}
-			return callback(null);
+			});
 		});
 	});
 };

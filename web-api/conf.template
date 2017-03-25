@@ -12,6 +12,7 @@
     "MONGO_DBNAME": "ds_db_name",
     "MONGO_COLLECTION": "ds_collection_name",
     "DNS_ADDRESS": "${DNS_ADDRESS}",
+	"TDT_ADDRESS": "http://web_tdt_ds:3002",
     "REDIS_HOST" : "cache_redis_ds",
     "REDIS_DEFAULT_EXPIRE" : ${REDIS_DEFAULT_EXPIRE}
 }

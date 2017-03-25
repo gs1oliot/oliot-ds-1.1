@@ -14,7 +14,9 @@ if [ $# -ne 4 ]; then
 
 fi
 
-node ../test_data.js
+cd ..
+node test_data.js -a $4
+cd ./thp-test
 
 echo "Testing start.."
 

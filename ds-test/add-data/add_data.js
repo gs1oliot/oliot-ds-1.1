@@ -28,6 +28,7 @@ var num = argv.n;
 var address = argv.a;
 
 var ds_api_address = 'http://'+address+':3001';
+console.log(ds_api_address);
 var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 var interval_hour = 100*3600000;
 
@@ -38,7 +39,7 @@ var start = new Date(2016, 10, 15, 18, 1, 9, 0);
 var fs = require('fs');
 var token;
 
-fs.readFile('./token.txt', 'utf8', function (err, data) {
+fs.readFile('../token.txt', 'utf8', function (err, data) {
 	if (err){
 		console.log(err);
 	} else{

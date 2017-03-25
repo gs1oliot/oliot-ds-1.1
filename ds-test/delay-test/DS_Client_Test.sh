@@ -12,7 +12,9 @@ if [ $# -ne 4 ]; then
 
 fi
 
-node ../test_data.js
+cd ..
+node test_data.js -a $4
+cd ./delay-test
 
 for (( i=1; i<=$2; i++ )) 
 

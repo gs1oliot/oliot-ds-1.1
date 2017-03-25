@@ -1,4 +1,4 @@
-FROM oliotds11_node_java:latest
+FROM node:4-onbuild
 
 ADD ./conf.json /usr/src/app/config/conf.json
 

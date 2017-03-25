@@ -3,9 +3,13 @@
  */
 var coap        = require('coap'),
 	maindb		= require('../models/db/maindb'), 
-	tdt			= require('../tdt/tdt'),
-	socket = require('../ds_socket');
-			
+	//tdt			= require('../tdt/tdt'),
+	socket = require('../ds_socket'),
+	config = require('../config/conf.json');
+
+var rest = require('../rest.js');
+var tdt_address = config.TDT_ADDRESS;
+
 var res_array = [],
 	observe_array = [],
 	dataSet = [];
@@ -63,39 +67,46 @@ module.exports.observe_on =  function(servicename, callback){
 		return callback(null, {result: "success"});
 	}
 	var strArray = servicename.split(':');
-	var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
-	maindb.getData(pi, null, null, null, null, function(err, results){
-		if(err){
-			console.log(err);
-			return callback(err);
+	rest.getSimpleOperation(tdt_address,"thingname/"+strArray[0]+"/type/PURE_IDENTITY", function (error, response) {
+		if(error){
+			console.log(error);
+			return callback(error);
 		}
-		if(results.length === 1){
-			coap_req = coap.request({
-				host: results[0].thing_address,
-				pathname: strArray[1],
-				observe: true
-			})
-					
-			
-			coap_req.on('response', function(res) {
-			  //res.pipe(process.stdout)
-			  observe_array.push(servicename);	
-			  res_array.push(res);
-			  res.on('data', function(data){
-				  //var arr = [];
-				  //for(i = 0; i < data.length; ++i){
-				  //	  arr.push(data[i]);
-				  //}
-			  	  //console.log(arr.length);
-				  var floatArr = parseFloats(data);
-				  //console.log(dataKalman);
-				  socket.sendData(servicename, floatArr);
-			  });
-			  return callback(null, {result: "success"});
-			});
-			
-			coap_req.end()
-		}
+		var pi = response.result;
+		//var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
+		maindb.getData(pi, null, null, null, null, function(err, results){
+			if(err){
+				console.log(err);
+				return callback(err);
+			}
+			if(results.length === 1){
+				coap_req = coap.request({
+					host: results[0].thing_address,
+					pathname: strArray[1],
+					observe: true
+				})
+						
+				
+				coap_req.on('response', function(res) {
+				  //res.pipe(process.stdout)
+				  observe_array.push(servicename);	
+				  res_array.push(res);
+				  res.on('data', function(data){
+					  //var arr = [];
+					  //for(i = 0; i < data.length; ++i){
+					  //	  arr.push(data[i]);
+					  //}
+				  	  //console.log(arr.length);
+					  var floatArr = parseFloats(data);
+					  //console.log(dataKalman);
+					  socket.sendData(servicename, floatArr);
+				  });
+				  return callback(null, {result: "success"});
+				});
+				
+				coap_req.end()
+			}
+		});
 	});
 }
 

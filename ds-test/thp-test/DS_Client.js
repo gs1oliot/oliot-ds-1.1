@@ -31,7 +31,7 @@ var i = 0;
 var fs = require('fs');
 var token;
 
-fs.readFile('./token.txt', 'utf8', function (err, data) {
+fs.readFile('../token.txt', 'utf8', function (err, data) {
 	if (err){
 		console.log(err);
 	} else{

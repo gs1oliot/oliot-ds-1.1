@@ -1,5 +1,6 @@
 {
 	"PORT": 3000,
 	"DS_API_ADDRESS": "http://web_api_ds:3001",
+	"TDT_ADDRESS": "http://web_tdt_ds:3002",
 	"DNS_ADDRESS": "${DNS_ADDRESS}"
 }

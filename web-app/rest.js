@@ -117,7 +117,7 @@ exports.getOperation = function (uri, operation, username, token, password, args
 		}
 		if (res.statusCode === 200) {
 			try {
-				console.log(body);
+				//console.log(body);
 				var operationResponse = JSON.parse(body);
 				if(operationResponse.error) {
 					return callback(operationResponse.error);
