@@ -449,22 +449,3 @@ User.create = function (props, callback) {
         callback(null, user);
     });
 };
-
-// Static initialization:
-
-// Register our unique username constraint.
-// TODO: This is done async'ly (fire and forget) here for simplicity,
-// but this would be better as a formal schema migration script or similar.
-db.createConstraint({
-    label: 'User',
-    property: 'username',
-}, function (err, constraint) {
-    if (err) {
-    	throw err;     // Failing fast for now, by crash the application.
-    }
-    if (constraint) {
-        console.log('(Registered unique usernames constraint.)');
-    } else {
-        // Constraint already present; no need to log anything.
-    }
-});

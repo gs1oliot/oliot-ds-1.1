@@ -13,6 +13,11 @@ services:
       - ${PWD}/ds-data/neo4j/data:/data
       - ${PWD}/ds-data/neo4j/logs:/logs
       - ${PWD}/ds-data/neo4j/constraints.cql:/var/lib/neo4j/import/constraints.cql
+      - ${PWD}/ds-data/neo4j/constraints.sh:/constraints.sh
+    entrypoint: 
+      - bash
+    command:
+      - /constraints.sh
   auth_ds:
     container_name: auth_postgre_ds
     image: postgres:9.4

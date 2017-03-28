@@ -770,23 +770,3 @@ Service.isAuthority = function(username, servicename, callback){
 	});
 		
 };
-
-
-// Static initialization:
-
-// Register our unique servicename constraint.
-// TODO: This is done async'ly (fire and forget) here for simplicity,
-// but this would be better as a formal schema migration script or similar.
-db.createConstraint({
-    label: 'Service',
-    property: 'servicename',
-}, function (err, constraint) {
-    if (err) {
-    	throw err;     // Failing fast for now, by crash the application.
-    }
-    if (constraint) {
-        console.log('(Registered unique resourcnames constraint.)');
-    } else {
-        // Constraint already present; no need to log anything.
-    }
-});
