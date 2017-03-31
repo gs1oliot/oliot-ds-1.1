@@ -19,8 +19,6 @@
     "coap": "0.12.1",
     "kalmanjs": "1.0.0-beta",
     "request": "2.75.0",
-    "bluebird": "3.4.6",
-    "pg-promise": "3.2.6" 
-    
+    "pg": "6.1.0"
   }
 }
