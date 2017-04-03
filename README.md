@@ -2,9 +2,10 @@
 Oliot-ds is an implementation of EPCglobal Discovery Service.
 
 ## Features
-* Node.js based RESTful Interface for easy service records management
-* Access control to share accesibitity to service records with others
-* Oauth 2.0 compliant authentification 
+* Node.js based RESTful Interface for easy access control management
+* Fine grained access control model
+* Oauth 2.0 compliant authentification
+* Two-layered storage architecture
 
 ## Install
 ### Prerequisites
