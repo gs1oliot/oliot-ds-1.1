@@ -25,7 +25,7 @@ exports.configure = function (app) {
 	  model: require('./models/acc/auth'), 
 	  grants: ['password', 'refresh_token'],
 	  debug: true,
-	  accessTokenLifetime: 36000/*,
+	  accessTokenLifetime: 3600/*,
 	  refreshTokenLifetime: 999999999*/
 	});
 

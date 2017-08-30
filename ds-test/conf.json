@@ -1,6 +1,0 @@
-{
-    "DS_API_ADDRESS": "http://127.0.0.1:3001",
-    "DS_ID": "test",
-    "DS_PW": "password",
-    "DS_THING": "urn:epc:id:sgtin:8800000.300025.123"
-}
