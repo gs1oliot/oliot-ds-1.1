@@ -373,6 +373,9 @@ Thing.isOwner = function(username, thingname, callback){
 };
 
 Thing.isAuthority = function(username, thingname, callback){
+	if(username === config.SUPER_USER){
+    	return callback(null, {result: "success", thingname: thingname});
+	};
 	cachedb.loadCachedData(username+':'+thingname, function(err, results){
 		if(results && JSON.parse(results).authority){
 			//console.log("cache hit for :"+username+":"+thingname);

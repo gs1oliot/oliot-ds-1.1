@@ -170,13 +170,15 @@ exports.configure = function (app) {
 		var servicename = req.params.servicename;
 		rest.getOperation(ds_api_address, "service/"+encodeURIComponent(req.params.servicename)+"/grant", null, req.user.token, null, null, function (error, response) {
 			var strArray = servicename.split(':');
+			var groups = response.groups;
+			var users = response.users;
 			rest.getOperation(tdt_address,"thingname/"+strArray[0]+"/type/PURE_IDENTITY", null, null, null ,null, function (error, response) {
 				if(error){
-					res.render('error.jade', { user: req.user, thingname: strArray[0], servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: response.groups, users: response.users, error: error });
+					res.render('error.jade', { user: req.user, thingname: strArray[0], servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: groups, users: users, error: error });
 				} else {
 					var pi = response.result;
 					//var pi = tdt.convertString(strArray[0], 'PURE_IDENTITY');
-					res.render('editservice.jade', { user: req.user,  thingname: pi, servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: response.groups, users: response.users, error: error });
+					res.render('editservice.jade', { user: req.user,  thingname: pi, servicename: servicename, encodeServicename: encodeURIComponent(servicename), groups: groups, users: users, error: error });
 				}
 			});
 		});
