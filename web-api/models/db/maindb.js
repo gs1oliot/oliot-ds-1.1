@@ -17,6 +17,7 @@ MongoClient.connect(url, function(err, db) {
 	// Get the documents collection
 	collections[config.MONGO_COLLECTION] = db.collection(config.MONGO_COLLECTION);
 	collections[config.MONGO_COLLECTION+'_latest'] = db.collection(config.MONGO_COLLECTION+'_latest');
+	collections[config.USER_COLLECTION] = db.collection(config.USER_COLLECTION);
 	
 	console.log("Connected correctly to server");
 });
@@ -107,6 +108,40 @@ module.exports.updateLatestData=function(collection, data, callback) {
 	});
 };
 
+
+module.exports.updateUserMapping=function(collection, data, callback) {
+	cachedb.cacheData(data.username, JSON.stringify(data));
+
+	collection.update({"username": data.username}, data, {upsert:true}, function(err, result){
+		if(err) {
+			return callback(err);
+		}
+		return callback(null, {result:"success"});
+	});
+};
+
+module.exports.getUserMapping=function(collection, username, callback) {
+	
+	cachedb.loadCachedData(username, function(err, result){
+		if (result) {
+			//console.log("cache hit for :"+thingname);
+			//cachedb.setExpire(thingname, config.REDIS_DEFAULT_EXPIRE);
+			return callback(null, result);
+		}
+		var findQuery = {
+			"username":username
+		};
+		//console.log(findQuery);
+		
+		collection.find(findQuery).limit(1).sort({"timestamp":-1}).toArray(function(err, docs) {
+			if(err) {
+				return callback(err);
+			}
+			callback(null, docs[0]);
+			cachedb.cacheData(username,  JSON.stringify(docs[0]));
+		});
+	});
+};
 
 module.exports.getDatabyTime=function(collection, query, query_url, callback) {
 	if(!query.from || !query.to){
@@ -361,18 +396,23 @@ module.exports.getLatestData=function(collection, thingname, callback) {
 			//cachedb.setExpire(thingname, config.REDIS_DEFAULT_EXPIRE);
 			return callback(null, result);
 		}
-	});
-	
-	var findQuery = {
-		"thingname":thingname
-	};
-	//console.log(findQuery);
-	
-	collection.find(findQuery).limit(1).sort({"timestamp":-1}).toArray(function(err, docs) {
-		if(err) {
-			return callback(err);
-		}
-		callback(null, docs[0]);
-		cachedb.cacheData(thingname,  JSON.stringify(docs[0]));
+		
+		var findQuery = {
+			"thingname":thingname
+		};
+		//console.log(findQuery);
+		
+		collection.find(findQuery).limit(1).sort({"timestamp":-1}).toArray(function(err, docs) {
+			if(err) {
+				return callback(err);
+			}
+			callback(null, docs[0]);
+			cachedb.cacheData(thingname,  JSON.stringify(docs[0]));
+		});
 	});
 };
+
+
+
+
+

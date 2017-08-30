@@ -619,7 +619,81 @@ exports.configure = function (app) {
 		});
 		
 	});
-
+	app.get('/user/map', app.oauth.authorise(), function(req, res){
+		auth.getUserbyToken(req.oauth.bearerToken.accessToken, function(err, results){
+			if(err){
+				console.log(err);
+				return res.status(500).send({error: err});
+			}
+			maindb.getUserMapping(maindb.getCollection(config.USER_COLLECTION), results.username,  function(err, results){
+				if (err){
+					console.log(err);
+					return res.status(500).send({error: err});
+				}
+				//console.log(results);
+				return res.send(results);
+			}); 
+		});
+	});
+	app.post('/user/map', app.oauth.authorise(), function(req, res){
+		auth.getUserbyToken(req.oauth.bearerToken.accessToken, function(err, results){
+			if(err){
+				console.log(err);
+				return res.status(500).send({error: err});
+			}
+			var username = results.username;
+			Thing.isAuthority(username, req.body.thingname, function(err, results){
+				if (err){
+					console.log(err);
+					return res.status(500).send({error: err});
+				}
+				if(results.result !== 'success'){
+					return res.send(results);
+				}
+				var storedData = {
+					thingname: req.body.thingname,
+					username: username
+				};
+				maindb.updateUserMapping(maindb.getCollection(config.USER_COLLECTION), storedData, function(err, result){
+					if (err){
+						console.log("insert:"+err);
+						return res.status(500).send({error: err});
+					}
+					console.log(result);
+					return res.send({result:result.result});
+					//storedData["thingname"] = req.body.thingname;
+				});
+			});
+		});
+	});
+	
+	app.get('/thing/:thingname/latest', app.oauth.authorise(), function(req, res){
+		console.log("latest");
+		auth.getUserbyToken(req.oauth.bearerToken.accessToken, function(err, results){
+			if(err){
+				console.log(err);
+				return res.status(500).send({error: err});
+			}
+			Thing.isAuthority(results.username, req.params.thingname, function(err, results){
+				if (err){
+					console.log(err);
+					return res.status(500).send({error: err});
+				}
+				if(results.result !== 'success'){
+					return res.send(results);
+				} 
+				maindb.getLatestData(maindb.getCollection(config.MONGO_COLLECTION+"_latest"), req.params.thingname,  function(err, results){
+					if (err){
+						console.log(err);
+						return res.status(500).send({error: err});
+					}
+					//console.log(results);
+					return res.send(results);
+				});
+			});
+		});
+		
+	});
 	app.get('/query?:queryStr', app.oauth.authorise(), function(req, res){
 		var extractedQuery = req.url.slice(req.url.lastIndexOf('?')+1);
 		
